@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html>
+
+<head >
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hello Bulma!</title>
+    <link rel="stylesheet" href="bulma.css">
+    <style>
+        .arr-element {
+            border: solid 2px #000;
+
+            float: left;
+            padding: 2px;
+            margin: 4px;
+            width: 80px;
+            border-radius: 4px;
+            text-align: center;
+            color: white;
+        }
+
+        .red {
+            border: solid 2px #ff851b;
+            background-color: #ffc28d;
+
+        }
+
+        .green {
+            border: solid 2px #197338;
+            background-color: #65d065;
+
+        }
+
+        .yellow {
+            border: solid 2px #209cee;
+            background-color: #5eb5ef;
+
+        }
+
+        section {
+            box-shadow: 0 1px 2px rgba(10, 10, 10, .1);
+            display: -ms-flexbox;
+            display: table;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="https://bulma.io">
+                <b>Ahmed Wassef</b>
+            </a>
+
+            <div class="navbar-burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+
+    <div class="container is-centered">
+
+        <div class="column is-11is-offset-1">
+            <nav class="panel">
+                <p class="panel-heading">
+                    Enter Data
+                </p>
+                <div class="panel-block">
+                    <p class="control has-icons-left">
+                        <div class="control">
+                            <input class="input " pattern="^[1-8](,[1-8])*$" style="width: 800px;" id="data" type="text" placeholder="Add data sush as 1,22,44,7,0,7,10,7,8,...">
+                        </div>
+                        <div class="control">
+                            <a id="clc" class="button is-info">
+                                Calculate
+                            </a>
+                        </div>
+                    </p>
+                </div>
+
+            </nav>
+
+        </div>
+        <div class="columns">
+
+            <div class="column">
+                <div class="card" id="info-card" style="display:none; margin:1px">
+                    <header class="card-header">
+                        <p class="card-header-title">
+                            Component
+                        </p>
+
+                    </header>
+
+
+                    <div class="card-content">
+                        <div class="content">
+                            <b>Sorted Array : </b>
+
+                            <section id="sorted-arrray">
+
+                            </section>
+
+
+                            <b>Lower Half Part : </b>
+
+                            <section id="top-selected-arrray">
+
+                            </section>
+
+
+                            <b>Upper Half Part : </b>
+
+                            <section id="bottom-selected-arrray">
+
+                            </section>
+
+                            <b>Analytics table </b>
+
+                            <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                                <thead>
+                                    <th>Name</th>
+                                    <th>Value</th>
+                                </thead>
+                                <tr>
+                                    <td>Max </td>
+                                    <td id="Max"></td>
+                                </tr>
+                                <tr>
+                                    <td>Min </td>
+                                    <td id="Min"></td>
+                                </tr>
+                                <tr>
+                                    <td>Mean </td>
+                                    <td id="mean"></td>
+                                </tr>
+                                <tr>
+                                    <td>Range </td>
+                                    <td id="range"></td>
+                                </tr>
+                                <tr>
+                                    <td>median </td>
+                                    <td id="median"></td>
+                                </tr>
+                                <tr>
+                                    <td>Mode </td>
+                                    <td id="mode"></td>
+                                </tr>
+                                <tr>
+                                    <td>Standard Deviation σ </td>
+                                    <td id="stdev"></td>
+                                </tr>
+                                <tr>
+                                    <td>Variance σ2 </td>
+                                    <td id="Varia"></td>
+                                </tr>
+                                <tr>
+                                    <td>Q1 </td>
+                                    <td id="q1"></td>
+                                </tr>
+                                <tr>
+                                    <td>Q3 </td>
+                                    <td id="q3"></td>
+                                </tr>
+                                <tr>
+                                    <td>IQR </td>
+                                    <td id="iqr"></td>
+                                </tr>
+                                <tr>
+                                    <td>Lower Fence </td>
+                                    <td id="lower_fence"></td>
+                                </tr>
+
+
+                                <tr>
+                                    <td>Upper Fence </td>
+                                    <td id="up"></td>
+                                </tr>
+                            </table>
+
+                            <br>
+                            <time id="datetime" datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="column">
+                <div class="card" id="plot" style="display:none; margin:1px">
+
+                </div>
+            </div>
+
+
+
+        </div>
+
+        <div class="notification is-danger" id="error" style="display:none;margin:10px 100px 10px 0px">
+            <button class="delete"></button>
+            <strong>Insert data in format 1,5,7,9</strong>
+        </div>
+
+    </div>
+
+
+    </div>
+
+
+
+
+
+
+</body>
+
+<script src="app.js"></script>
+
+<script>
+
+    function statics() {
+
+        var bottomnumber = [];
+        var topnumpers = [];
+        var q1;
+        var q3;
+        var max;
+        var min;
+
+        this.dataSet = function () {
+            var string = document.getElementById('data').value;
+            var num = string.split(',');
+           
+            for (var i = 0; i < num.length; i++) {
+                num[i] = parseFloat(num[i]);
+            }
+            num.sort(function (a, b) { return a - b; });
+
+            max = parseFloat(num[(num.length) - 1]);
+            min = parseFloat(num[0]);
+
+            return num;
+        
+        }
+
+        this.mean = function (numbers) {
+            var total = 0, i;
+            for (i = 0; i < numbers.length; i += 1) {
+                total += numbers[i];
+            }
+            console.log('mean = ' + (total / numbers.length));
+
+            return total / numbers.length;
+        }
+
+
+        this.median = function (values) {
+            values.sort(function (a, b) { return a - b; });
+            document.getElementById("Max").innerHTML = values[(values.length) - 1];
+            document.getElementById("Min").innerHTML = values[0];
+
+            var half = Math.floor(values.length / 2);
+
+            if (values.length % 2) {
+                console.log('median = ' + values[half]);
+
+                return values[half];
+
+            }
+            else
+                console.log('median = ' + (values[half - 1] + values[half]) / 2.0);
+
+            return (values[half - 1] + values[half]) / 2.0;
+
+        }
+
+
+        this.mode = function (numbers) {
+
+            var modes = [], count = [], i, number, maxIndex = 0;
+
+            for (i = 0; i < numbers.length; i += 1) {
+                number = numbers[i];
+                count[number] = (count[number] || 0) + 1;
+                if (count[number] > maxIndex) {
+                    maxIndex = count[number];
+                }
+            }
+
+            for (i in count)
+                if (count.hasOwnProperty(i)) {
+                    if (count[i] === maxIndex) {
+                        modes.push(Number(i));
+                    }
+                }
+
+
+            console.log('modes = ' + modes);
+            return modes;
+        }
+
+
+        this.range = function (numbers) {
+            numbers.sort();
+            console.log('range = ' + [numbers[0], numbers[numbers.length - 1]]);
+            return [numbers[0], numbers[numbers.length - 1]];
+        }
+
+
+        this.stdev = function (values) {
+            var avg = average(values);
+
+            var squareDiffs = values.map(function (value) {
+                var diff = value - avg;
+                var sqrDiff = diff * diff;
+                return sqrDiff;
+            });
+
+            var avgSquareDiff = average(squareDiffs);
+
+            var stdDev = Math.sqrt(avgSquareDiff);
+            return stdDev;
+        }
+
+        function average(data) {
+            var sum = data.reduce(function (sum, value) {
+                return sum + value;
+            }, 0);
+
+            var avg = sum / data.length;
+            return avg;
+        }
+
+
+        this.Render = function (num, htmlElement) {
+
+
+            var div1, div1, t2, t, element2, element;
+
+            num = num.sort(function (a, b) { return a - b });
+
+            var half = Math.floor(num.length / 2);
+
+            document.getElementById(htmlElement).innerHTML = '';
+
+            for (var i = 0; i < num.length; i++) {
+                div1 = document.createElement("div");
+                div1.className = 'arr-element';
+
+
+                if (num.length % 2) {
+
+                    if (i == half) {
+                        div1.className = 'arr-element red';
+
+                    }
+                    if (i < half) {
+                        div1.className = 'arr-element green';
+                    }
+                    if (i > half) {
+                        div1.className = 'arr-element yellow';
+
+                    }
+
+                }
+                else {
+                    if (i == half) {
+                        div1.className = 'arr-element red';
+
+                    }
+                    if (i == half - 1) {
+                        div1.className = 'arr-element red';
+
+                    }
+
+                    if (i < half - 1) {
+                        div1.className = 'arr-element green';
+                    }
+                    if (i > half) {
+                        div1.className = 'arr-element yellow';
+                        div123 = document.createElement("div");
+                    }
+                }
+
+                t = document.createTextNode(num[i]);
+                div1.appendChild(t);
+                element = document.getElementById(htmlElement);
+                element.appendChild(div1);
+            }
+
+
+        }
+
+
+
+        this.top = function (num) {
+            num = num.sort(function (a, b) { return a - b });
+
+            var half = Math.floor(num.length / 2);
+
+
+
+            for (var i = 0; i < num.length; i++) {
+
+
+
+                if (num.length % 2) {
+
+                    if (i < half) {
+                        topnumpers.push(num[i]);
+
+                    }
+                }
+                else {
+                    if (i < half) {
+                        topnumpers.push(num[i]);
+                    }
+                }
+
+                half1 = Math.floor(topnumpers.length / 2);
+                if (topnumpers.length % 2) {
+                    q1 = topnumpers[half1];
+
+                }
+                else {
+                    q1 = ((topnumpers[half1] + (topnumpers[half1 - 1])) / 2);
+
+                }
+
+            }
+
+            return topnumpers;
+        }
+
+
+
+        this.bottom = function (num) {
+            num = num.sort(function (a, b) { return a - b });
+
+            var half = Math.floor(num.length / 2);
+
+
+
+            for (var i = 0; i < num.length; i++) {
+
+
+
+                if (num.length % 2) {
+
+                    if (i > half) {
+                        bottomnumber.push(num[i]);
+                    }
+                }
+                else {
+                    if (i > half - 1) {
+                        bottomnumber.push(num[i]);
+                    }
+                }
+
+                half1 = Math.floor(bottomnumber.length / 2);
+                if (bottomnumber.length % 2) {
+                    q3 = bottomnumber[half1];
+
+                }
+                else {
+                    q3 = ((bottomnumber[half1] + (bottomnumber[half1 - 1])) / 2)
+
+                }
+
+            }
+
+
+            return bottomnumber;
+        }
+
+
+        this.plot = function (num) {
+            var data =
+                [
+                    {
+                        y: num,
+                        boxpoints: 'all',
+                        jitter: 0.3,
+                        pointpos: -1.8,
+                        type: 'box',
+                        name: 'Mean and Standard Deviation',
+                        marker: { color: '#FF851B' },
+                        boxmean: 'sd',
+                    }
+                ];
+            var layout = {
+                title: 'Horizontal Box Plot'
+            };
+            Plotly.newPlot('plot', data, layout);
+        }
+
+        this.reset = function () {
+            bottomnumber = [];
+            topnumpers = []
+        }
+
+        this.fNSummary = function () {
+            IQR = q3 - q1;
+            lower_fence = q1 - (1.5*IQR);
+            if(lower_fence<min)
+            lower_fence=min;
+            Upper_fence = q3 + (1.5*IQR);
+            if(Upper_fence>max)
+                Upper_fence=max;
+           
+            document.getElementById("q1").innerHTML = q1;
+            document.getElementById("q3").innerHTML = q3;
+            document.getElementById("iqr").innerHTML = IQR;
+            document.getElementById("lower_fence").innerHTML = lower_fence;
+            document.getElementById("up").innerHTML = Upper_fence;
+
+        }
+
+
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+
+        document.getElementById("clc").onclick = function () { runCode() };
+
+        var p = new statics();
+
+        var runCode = function () {
+            var re = new RegExp('^([0-9]+(\.[0-9]+)*,*)+$');
+            if (document.getElementById("data").value == '' || document.getElementById("data").value.match(re)) {
+                
+                document.getElementById("error").style.display = "none";
+
+                p.Render(p.dataSet(), 'sorted-arrray');
+
+                p.Render(p.top(p.dataSet()), 'top-selected-arrray');
+                p.Render(p.bottom(p.dataSet()), 'bottom-selected-arrray');
+                p.fNSummary();
+
+                document.getElementById("info-card").style.display = "block";
+                document.getElementById("plot").style.display = "block";
+                p.reset();
+
+                var today = new Date();
+                var year = (today.getYear() < 1000) ? (today.getYear() + 1900) : today.getYear();
+                document.getElementById("datetime").innerHTML = " Last Sync: " + today.getDate() + "/" + (today.getMonth() + 1) + "/" + year + " " + formatAMPM(today)
+                document.getElementById("range").innerHTML = (p.range(p.dataSet()).toString());
+                document.getElementById("median").innerHTML = (p.median(p.dataSet()));
+                document.getElementById("mode").innerHTML = (p.mode(p.dataSet()));
+                document.getElementById("mode").innerHTML = (p.mode(p.dataSet()));
+                document.getElementById("stdev").innerHTML = (p.stdev(p.dataSet()));
+                document.getElementById("Varia").innerHTML = ((p.stdev(p.dataSet())) * (p.stdev(p.dataSet())));
+
+
+
+                document.getElementById("mean").innerHTML = p.mean(p.dataSet());
+
+
+                p.plot(p.dataSet());
+            }
+            else{
+                document.getElementById("info-card").style.display = "none";
+                document.getElementById("plot").style.display = "none";
+                document.getElementById("error").style.display = "block";}
+
+        }
+
+        function formatAMPM(date) {
+            var hours = date.getHours();
+            var minutes = date.getMinutes();
+            var ampm = hours >= 12 ? 'pm' : 'am';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            var strTime = hours + ':' + minutes + ' ' + ampm;
+            return strTime;
+        }
+
+
+    })
+/*
+9.5,26.5,7.8,17.8,31.4,25.9,27.4,31.2,34.6,42.5,28.8,33.4,30.2,34.1,32.9,41.2,35.7
+*/
+</script>
+
+
+</html>
